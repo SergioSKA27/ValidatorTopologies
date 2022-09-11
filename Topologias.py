@@ -1,7 +1,6 @@
 
 from itertools import combinations, permutations,chain
 import copy
-import itertools
 import PySimpleGUI as sg
 
 
@@ -15,7 +14,7 @@ import PySimpleGUI as sg
 
 #2.the union  of an arbitrary number of elements on T , belongs to T as well
 
-#3.  the intersection of  any two members of T belongs to T
+#3.the intersection of  any two members of T belongs to T
 
 
 
@@ -80,6 +79,13 @@ class Set:
         return len(self.elements) == 0
 
     def uNION(self, other):
+        """
+        It takes the elements of the first set and adds them to a new set, then it takes the elements of the second set and
+        adds them to the new set
+
+        :param other: Set
+        :return: The union of the two sets.
+        """
         uni = Set(0,[])
 
         for i in self.elemtslist:
@@ -90,6 +96,12 @@ class Set:
         return uni
 
     def Intersection(self, other):
+        """
+        It returns the intersection of two sets.
+
+        :param other: Set
+        :return: The intersection of two sets.
+        """
         inter = Set(0,[])
 
         if self.is_emptyset() or other.is_emptyset():
@@ -102,11 +114,18 @@ class Set:
         return inter
 
     def __repr__(self) -> str:
+        """
+        The function returns a string representation of the set
+        :return: The elements of the set.
+        """
         if self.is_emptyset():
             return "∅"
         return str(self.elements)
 
     def __str__(self) -> str:
+        """
+        The function takes a set and returns a string representation of the set
+        """
         if self.is_emptyset():
             return "∅"
         ss = "{"
@@ -114,7 +133,40 @@ class Set:
             ss = ss + str(i) + ','
         return ss + '}'
 
+    def __eq__(self, __o: object) -> bool:
+        """
+        It checks if the two sets are equal by checking if the elements of one set are in the other set and vice versa
+
+        :param __o: object
+        :type __o: object
+        :return: a boolean value.
+        """
+        flag = True
+        if len(self.elements) != len(__o.elementsscpy()):
+            return False
+        else:
+            if len(self.elements) == 0:
+                return True
+            for i in self.elemtslist:
+                if __o.belong(i) == False:
+                    flag = False
+                    break
+                else:
+                    continue
+            if flag:
+                for j in list(__o.elementsscpy()):
+                    if self.belong(j) == False:
+                        flag = False
+                        break
+                    else:
+                        continue
+        return flag
+
     def Powerset(self):
+        """
+        It returns the powerset of a set.
+        :return: A list of sets.
+        """
         Ps = []
         ts = chain.from_iterable(combinations(self.elemtslist, r) for r in range(len(self.elements)+1))
         for e in ts:
@@ -125,44 +177,110 @@ class Set:
         return Ps
 
 
+def FamilySetUnion(F) -> Set:
+    U = copy.copy(F[0])
+    for i in range(1,len(F)):
+        U = U.uNION(F[i])
+    return U
+
+
+
+def is_topologie(T, s):
+    flag1 = 0
+    for i in  T:
+        if i.is_emptyset():
+            #print("000")
+            flag1 += 1
+            break
+
+    for i in  T:
+        if i == s:
+            flag1 += 1
+            break
+
+    if flag1 < 2 :
+        return False
+
+    pairs = []
+    flag2 = True
+    for i in range(2,len(T)+1):
+        cm = combinations(T,i)
+        if i == 2:
+            pairs = list(cm)
+        for j in list(cm):
+            #print("TS",j)
+            FU = FamilySetUnion(j)
+            #print("FU ",FU)
+            blongTt = False
+            for k in  T:
+                if k == FU:
+                    blongTt = True
+            if blongTt == False:
+                flag2 = False
+                break
+
+        #print("-------------")
+
+    if(flag2 == False):
+        return False
+
+    #print(pairs)
+    flag3 =  True
+    for i in  range(0,len(pairs)):
+        intr = pairs[i][0].Intersection(pairs[i][1])
+        gg = False
+        for j in T:
+            if j == intr:
+                gg = True
+                break
+        if gg == False:
+            flag3 = False
+            break
+
+    if(flag3 == False):
+        return False
+
+
+    return True
+
+
+
+def topologies_of_Set(S):
+    T = []
+    NT = []
+    P = S.Powerset()
+    for i in range(1,len(P)+1):
+        perms = combinations(P,i)
+        for cs in list(perms):
+            if len(cs) == 1:
+                NT.append(cs)
+                continue
+            if is_topologie(cs,S):
+                print("TOPOLOGY :)",cs)
+                T.append(cs)
+            else:
+                #print(cs)
+                NT.append(cs)
+    #print("Tops" ,T)
+    #print("NoTops",NT)
 
 
 
 
-
-# It creates a new class called Subset that inherits from the Set class.
-class Subset(Set):
-
-    def  __init__(self,elements):
-        """
-        The function __init__() is a constructor that initializes the class Vector
-
-        :param elements: a list of elements
-        """
-        super().__init__(len(elements), elements)
-
-
-
-
-
-
-
-
-S1 = Set(4, [1,2,3,4])
-S2 = Set(3, [5])
+S1 = Set(2, [1,2])
+Sp = Set(3, [1,2,3])
+S2 = Set(4, ["A","B","C","D"])
 P = []
+P2 = []
 
-
-P = S1.Powerset()
-
-print(S1.Intersection(S2))
-
-
-
-print(len(P))
+topologies_of_Set(S2)
 
 
 
+print(S1 == Sp)
+
+
+"""
 
 layout0 = [[sg.Button("Ayuda?",key='-Bhelp-')],[sg.Text("Ingrese el conjunto a evaluar")],[sg.Input("",key='-Setinput-')],
             [sg.Button("Calcular Topologias",key='-Btopologies-')]]
@@ -181,4 +299,4 @@ while True:
 
 
 
-window.close() #Cerramos la ventana
+window.close() #Cerramos la ventana"""
