@@ -1,5 +1,6 @@
 
 from itertools import combinations, permutations,chain
+import time
 import copy
 import PySimpleGUI as sg
 
@@ -186,6 +187,13 @@ def FamilySetUnion(F) -> Set:
 
 
 def is_topologie(T, s):
+    """
+    The function checks if the given set of sets is a topology on the given set.
+
+    :param T: a list of sets
+    :param s: the set of all elements
+    :return: A boolean value.
+    """
     flag1 = 0
     for i in  T:
         if i.is_emptyset():
@@ -246,24 +254,56 @@ def is_topologie(T, s):
 
 
 def topologies_of_Set(S):
-    T = []
-    NT = []
+    """
+    It takes a set S and returns a list of all the topologies of S
+
+    :param S: The set of elements that the topology will be defined on
+    """
+    t = []
+    nt = []
     P = S.Powerset()
     for i in range(1,len(P)+1):
         perms = combinations(P,i)
         for cs in list(perms):
             if len(cs) == 1:
-                NT.append(cs)
+                nt.append(cs)
                 continue
             if is_topologie(cs,S):
-                print("TOPOLOGY :)",cs)
-                T.append(cs)
+                #print("TOPOLOGY :)",cs)
+                t.append(cs)
             else:
                 #print(cs)
-                NT.append(cs)
+                nt.append(cs)
+    return t,nt
     #print("Tops" ,T)
     #print("NoTops",NT)
 
+
+def readinput(s):
+    """
+    It takes a string and returns a set
+
+    :param s: the string to be read
+    :return: A set of strings.
+    """
+    if len(s) == 0 :
+        return Set(0,[])
+    else:
+        cset = Set(0,[])
+        ss = ""
+        for i in s:
+            if i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '{' and i != '}' :
+                ss = ss + i
+            elif i == '{' or i == '}':
+                continue
+            else :
+                cset.addelement(ss)
+                ss = ""
+
+
+        if len(ss) != 0:
+            cset.addelement(ss)
+        return cset
 
 
 
@@ -272,31 +312,164 @@ Sp = Set(3, [1,2,3])
 S2 = Set(4, ["A","B","C","D"])
 P = []
 P2 = []
+start = time.time()
+topologies_of_Set(Sp)
+end = time.time()
 
-topologies_of_Set(S2)
-
+print(end-start)
 
 
 print(S1 == Sp)
 
 
-"""
 
+#GUI Part
+
+sg.theme('Dark Blue 3')
+
+
+#Some text for the Help Section :)
+
+TextFuncApp0 = "La aplicaión fue diseñada para Calcular  todas las posibles topologías de un conjuto(finito) dado , además de proporcionar todas aquellas que no lo son. "
+TextFuncApp1 = "El funcionamiento de la aplicación en bastante sencillo , en el apartado principal podra encontrar tres diferentes elementos, tales como una caja de texto en la cual podra ingresar el conjunto deseado, separando los elementos del conjunto por alguno de los siguientes simbolos: \n"
+TextFuncApp2 = "Simbolos Separadores : coma, ;, |, espacio.\n No existe ninguna restricción para definir los miembros del conjunto por tanto cualquier elemento que pueda ser representado por medio de caracteres ASSCI es valido.\n A continuacion Algunos ejemplos de conjutos:  \n"
+TextFuncApp3 = "El conjunto {A,B,C} deberia de ingresarse como A,B,C o A;B;C o A B C o A|B|C.\n El conjunto {1,2,3} debería de ingresarse como 1,2,3 o 1;2;3 o 1 2 3 o 1|2|3.\n"
+TextFuncApp4 = "Finalmente debería presionar el boton de calcular topolpogías, el cual lo dirigira a la seccion donde podra consular aquellas que si lo son y aquellas que no lo son.\n En caso de necesitar ayuda simpre podra presionar el boton ayuda ubicado en la pantalla inicial, y consultar cualquiera de los apartados de dicha sección."
+TextFuncApp = TextFuncApp0 + TextFuncApp1 + TextFuncApp2 +TextFuncApp3 +TextFuncApp4
+textytopology0 = "La Topología es una generalización de algunas de las propiedades de intervalo abierto en la recta real, propiedades independientes de otras presentes en R como la suma, el orden o la distancia.\n"
+textytopology1 = "Definición\n Una topología sobre un conjunto X, es una familia τ ⊂ P(X), verificando \n(i) ∅, X ∈ τ ,\n(ii) si A, B ∈ τ , entonces A ∩ B ∈ τ ,\niii) si { A_i } , i∈I ⊂ τ , entonces ∪ A_i ∈ τ.\nLos elementos de τ se llaman abiertos y el par (X, τ ) se llama espacio topológico."
+textytopology2 ="\nEjemplos\n Se introducen algunos ejemplos fundamentales en topología \n1) sobre X, τind = {∅, X} es la topología indiscreta;\n2) sobre X, τdis = P(X) es la topología discreta;"
+textytopology = textytopology0 +textytopology1 + textytopology2
+#Layout 0 (First)
 layout0 = [[sg.Button("Ayuda?",key='-Bhelp-')],[sg.Text("Ingrese el conjunto a evaluar")],[sg.Input("",key='-Setinput-')],
             [sg.Button("Calcular Topologias",key='-Btopologies-')]]
 
+#Layout 1 (help)
+layout1 = [[sg.Button("<-",key='-returnL0-')],[sg.Button("Funcionamiento de la Aplicacion", key='-Bfunc-')],
+            [sg.Button("Topologias",key='-btopologiesfunc-')],[sg.Button("Algortimo Empleado",key='-Balgorithm-')]]
+
+#layout 2 (How to use the app)
+layout2 = [[sg.Button("<-",key='-returnL1L2-')],[sg.Text("Funcionamiento de la aplicacion")],
+            [sg.Multiline(TextFuncApp,key='-Funcapp-',size=(50,8),disabled=True)]]
+#Layout 3 (Information about Topologies)
+layout3 = [[sg.Button("<-",key='-returnL1L3-')],[sg.Text("Informacion acerca de Topologias ")],
+            [sg.Multiline(textytopology,key='-Topoinfo-',size=(50,8),disabled=True)]]
+
+#Layout 4 (topologies , No topologies and Power Set)
+layout4 = [[sg.Button("<-",key='-returnL0L4-')],[sg.Text("Topologías y No topologías del conjunto")],[sg.Text("∅",key='-Setstr-')],[sg.Button("Conjunto Potencia", key='-Bpowerset-')],
+            [sg.Button("Topologías", key='-Btopologias-')],[sg.Button("No topologías", key='-BNtopologias-')]]
+
+#Layout 5(Power SetTable)
+layout5 = [[sg.Button("<-",key='-returnL4L5-')],[sg.Text("Tabla del conjunto Potencia ")],
+            [sg.Table([[]],max_col_width=50,key='-powersetTable-',headings=["Subconjuntos"], hide_vertical_scroll=False, vertical_scroll_only=False,
+            auto_size_columns=False,col_widths=[100,50],justification='left')]]
+
+#Layout 6(Topologies Set Table)
+layout6 = [[sg.Button("<-",key='-returnL4L6-')],[sg.Text("Tabla de Topologías")],
+            [sg.Table([[]],key='-topologiesTable-',headings=["Topologías"], hide_vertical_scroll=False, vertical_scroll_only=False,
+            auto_size_columns=False,col_widths=[100,50],justification='left')]]
+
+#Layout 7(No Topologies Set Table)
+layout7 = [[sg.Button("<-",key='-returnL4L7-')],[sg.Text("Tabla de No Topologías")],
+            [sg.Table([[]],key='-notopologiesTable-',headings=["No Topologías"], hide_vertical_scroll=False, vertical_scroll_only=False,
+            auto_size_columns=False,col_widths=[100,50],justification='left')]]
 
 
-mainlayout =  [[sg.Column(layout0,key='-col1-',visible=True)]]
+#Main layout
+mainlayout =  [[sg.Column(layout0,key='-col1-',visible=True),sg.Column(layout1,key='-col2-',visible=False),sg.Column(layout2,key='-col3-',visible=False),
+                sg.Column(layout3,key='-col4-',visible=False),sg.Column(layout4,key='-col5-',visible=False),sg.Column(layout5,key='-col6-',visible=False),
+                sg.Column(layout6,key='-col7-',visible=False),sg.Column(layout7,key='-col8-',visible=False)]]
 window = sg.Window(title="TOPOLOGIAS", layout=mainlayout,auto_size_buttons=True,auto_size_text=True,resizable=True)
 
 # Create an event loop
 while True:
     event, values = window.read()#Captura los eventos y los valores de los elementos
+    #print(event)
+    #print(values)
     #Evento para cerrar el programa
     if event == sg.WIN_CLOSED:
         break
 
+    if event == '-Bhelp-':
+        window['-col1-'].update(visible=False)
+        window['-col2-'].update(visible=True)
+
+    if event == '-Bfunc-':
+        window['-col2-'].update(visible=False)
+        window['-col3-'].update(visible=True)
+
+    if event == '-btopologiesfunc-':
+        window['-col2-'].update(visible=False)
+        window['-col4-'].update(visible=True)
+
+    if event == '-Btopologies-':
+        iset = readinput(values['-Setinput-']) #Original Set
+        Piset = iset.Powerset() #Power Set
+        t,nt = topologies_of_Set(iset) #
+        ttop = []
+        nttop = []
+        print(len(t))
+
+        for i in  t:
+            print(i)
+            ttop.append([str(i)])
+
+        for i in  nt:
+            print(i)
+            nttop.append([str(i)])
+
+        print(iset)
+        window['-powersetTable-'].update(values=Piset)
+        window['-topologiesTable-'].update(values=ttop)
+        window['-notopologiesTable-'].update(values=nttop)
+        window['-Setstr-'].update(value=iset)
+        window['-col1-'].update(visible=False)
+        window['-col5-'].update(visible=True)
+
+    if event == '-Bpowerset-':
+        window['-col5-'].update(visible=False)
+        window['-col6-'].update(visible=True)
+
+    if event == '-Btopologias-':
+        window['-col5-'].update(visible=False)
+        window['-col7-'].update(visible=True)
+
+    if event == '-BNtopologias-':
+        window['-col5-'].update(visible=False)
+        window['-col8-'].update(visible=True)
+
+    if event == '-returnL0-':
+        window['-col1-'].update(visible=True)
+        window['-col2-'].update(visible=False)
+
+    if event == '-returnL0L4-':
+        window['-col1-'].update(visible=True)
+        window['-col5-'].update(visible=False)
+        window['-Setinput-'].update(value="")
+
+    if event == '-returnL1L2-' and window['-col3-'].visible == True:
+        window['-col2-'].update(visible=True)
+        window['-col3-'].update(visible=False)
+
+    if event == '-returnL1L3-' and window['-col4-'].visible == True:
+        window['-col2-'].update(visible=True)
+        window['-col4-'].update(visible=False)
+
+    if event == '-returnL4L5-' and window['-col6-'].visible == True:
+        window['-col5-'].update(visible=True)
+        window['-col6-'].update(visible=False)
+
+    if event == '-returnL4L6-' and window['-col7-'].visible == True:
+        window['-col5-'].update(visible=True)
+        window['-col7-'].update(visible=False)
+
+    if event == '-returnL4L7-' and window['-col8-'].visible == True:
+        window['-col5-'].update(visible=True)
+        window['-col8-'].update(visible=False)
 
 
-window.close() #Cerramos la ventana"""
+
+
+
+
+window.close() #Cerramos la ventana
