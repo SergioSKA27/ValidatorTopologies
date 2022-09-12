@@ -259,6 +259,9 @@ def topologies_of_Set(S):
 
     :param S: The set of elements that the topology will be defined on
     """
+
+    if S.is_emptyset():
+        return [(S,S)],[]
     t = []
     nt = []
     P = S.Powerset()
@@ -269,7 +272,7 @@ def topologies_of_Set(S):
                 nt.append(cs)
                 continue
             if is_topologie(cs,S):
-                #print("TOPOLOGY :)",cs)
+                print("TOPOLOGY :)",cs)
                 t.append(cs)
             else:
                 #print(cs)
@@ -307,21 +310,38 @@ def readinput(s):
 
 
 
-S1 = Set(2, [1,2])
-Sp = Set(3, [1,2,3])
-S2 = Set(4, ["A","B","C","D"])
-P = []
-P2 = []
-start = time.time()
-topologies_of_Set(Sp)
-end = time.time()
+#S1 = Set(2, [1,2])
+#Sp = Set(3, [1,2,3])
+#S2 = Set(4, ["A","B","C","D"])
+#P = []
+#P2 = []
+#start = time.time()
+#topologies_of_Set(Sp)
+#end = time.time()
+#
+#print(end-start)
+#
+#
+#print(S1 == Sp)
 
-print(end-start)
+"""
+    Los pasos que seguimos para obtener las topologías de un conjunto finito de elementos son los siguientes :
 
+    1)Obtenemos el conjunto potencia del conjunto dado.
 
-print(S1 == Sp)
+    2)Una vez tenemos el conjunto potencia, procederemos a calcular todas las posibles combinaciones de elementos tomados
+    en conjuntos de tamaño 2,... hasta n, de elementos del conjunto potencia.
 
+    3) Con cada conjunto de combinaciones comprobamos cuales de ellas, cumplen las caracteristicas de una Topología
 
+        3.1)Verificamos que el conjunto original y el conjunto vacío pertenescan a la Topología
+
+        3.2)Calculamos todas las posibles combinaciones de elementos(tomados en conjuntos de 2 hasta n) de la topología y verificamos que la unión arbitraria de cualquier numero de elementos pertenezca a la topología
+
+        3.3)Calculamos todas las posibles combinaciones de elementos tomados en conjuntos de 2 y verificamos que la intersección pertenezca a la topología
+
+    4)Retornamos una lista con las topologias validas y otra con aquellas que no lo son.
+"""
 
 #GUI Part
 
@@ -339,8 +359,30 @@ TextFuncApp = TextFuncApp0 + TextFuncApp1 + TextFuncApp2 +TextFuncApp3 +TextFunc
 textytopology0 = "La Topología es una generalización de algunas de las propiedades de intervalo abierto en la recta real, propiedades independientes de otras presentes en R como la suma, el orden o la distancia.\n"
 textytopology1 = "Definición\n Una topología sobre un conjunto X, es una familia τ ⊂ P(X), verificando \n(i) ∅, X ∈ τ ,\n(ii) si A, B ∈ τ , entonces A ∩ B ∈ τ ,\niii) si { A_i } , i∈I ⊂ τ , entonces ∪ A_i ∈ τ.\nLos elementos de τ se llaman abiertos y el par (X, τ ) se llama espacio topológico."
 textytopology2 ="\nEjemplos\n Se introducen algunos ejemplos fundamentales en topología \n1) sobre X, τind = {∅, X} es la topología indiscreta;\n2) sobre X, τdis = P(X) es la topología discreta;"
-textytopology = textytopology0 +textytopology1 + textytopology2
+textytopology3 = "\n\n\nNúmero de topologías en un conjunto finito\n Las topologías en un conjunto finito tienen una correspondencia uno a uno con los preordenes en el conjunto, y las topologías T0 tienen una correspondencia uno a uno con los ordenes parciales. Por lo tanto, el número de topologías en un conjunto finito es igual al número de preordenes y el número de topologías T0 es igual al número de ordenes parciales."
+textytopology4 = "\nSea T(n) el número de topologías distintas en un conjunto con n puntos. No existe una fórmula simple conocida para calcular T(n) para n arbitrario. La Enciclopedia en línea de secuencias enteras actualmente enumera T (n) para n ≤ 18.\nEl número de topologías T0 distintas en un conjunto con n puntos, denotado T0(n), está relacionado con T(n) por la fórmula \n\n T(n) = Σ (S(n,k)*T0(k)), 0 ≤ k ≤ n\n\n"
+textytopology5 = "donde S(n,k) denota el número de Stirling de segunda clase.\n(En matemáticas, particularmente en combinatoria, un número de Stirling del segundo tipo (o número de partición de Stirling) es el número de formas de dividir un conjunto de n objetos en k subconjuntos no vacíos y se denota por S ( n , k ).)"
+textytopology6 = "\nLa siguiente tabla enumera el número de topologías distintas (T0) en un conjunto con n elementos. También enumera el número de topologías no equivalentes (es decir, no homeomorfas)."
+textytopology = textytopology0 +textytopology1 + textytopology2 +textytopology3 +textytopology4+textytopology5+textytopology6
 #Layout 0 (First)
+textalgorithm = """
+    Los pasos que seguimos para obtener las topologías de un conjunto finito de elementos son los siguientes:
+
+    1)Obtenemos el conjunto potencia del conjunto dado.
+
+    2)Una vez tenemos el conjunto potencia, procederemos a calcular todas las posibles combinaciones de elementos tomados
+    en conjuntos de tamaño 2,... hasta n, de elementos del conjunto potencia.
+
+    3) Con cada conjunto de combinaciones comprobamos cuales de ellas, cumplen las caracteristicas de una Topología
+
+        3.1)Verificamos que el conjunto original y el conjunto vacío pertenescan a la Topología
+
+        3.2)Calculamos todas las posibles combinaciones de elementos(tomados en conjuntos de 2 hasta n) de la topología y verificamos que la unión arbitraria de cualquier numero de elementos pertenezca a la topología
+
+        3.3)Calculamos todas las posibles combinaciones de elementos tomados en conjuntos de 2 y verificamos que la intersección pertenezca a la topología
+
+    4)Retornamos una lista con las topologias validas y otra con aquellas que no lo son.
+"""
 layout0 = [[sg.Button("Ayuda?",key='-Bhelp-')],[sg.Text("Ingrese el conjunto a evaluar")],[sg.Input("",key='-Setinput-')],
             [sg.Button("Calcular Topologias",key='-Btopologies-')]]
 
@@ -353,7 +395,7 @@ layout2 = [[sg.Button("<-",key='-returnL1L2-')],[sg.Text("Funcionamiento de la a
             [sg.Multiline(TextFuncApp,key='-Funcapp-',size=(50,8),disabled=True)]]
 #Layout 3 (Information about Topologies)
 layout3 = [[sg.Button("<-",key='-returnL1L3-')],[sg.Text("Informacion acerca de Topologias ")],
-            [sg.Multiline(textytopology,key='-Topoinfo-',size=(50,8),disabled=True)]]
+            [sg.Multiline(textytopology,key='-Topoinfo-',size=(50,8),disabled=True)],[sg.Image('Table1.png',key='-img1-')]]
 
 #Layout 4 (topologies , No topologies and Power Set)
 layout4 = [[sg.Button("<-",key='-returnL0L4-')],[sg.Text("Topologías y No topologías del conjunto")],[sg.Text("∅",key='-Setstr-')],[sg.Button("Conjunto Potencia", key='-Bpowerset-')],
@@ -374,11 +416,14 @@ layout7 = [[sg.Button("<-",key='-returnL4L7-')],[sg.Text("Tabla de No Topología
             [sg.Table([[]],key='-notopologiesTable-',headings=["No Topologías"], hide_vertical_scroll=False, vertical_scroll_only=False,
             auto_size_columns=False,col_widths=[100,50],justification='left')]]
 
+layout8 = [[sg.Button("<-",key='-returnL1L8-')],[sg.Text("Funcionamiento del algoritmo")],
+            [sg.Multiline(textalgorithm,key='-Funcalgo-',size=(50,8),disabled=True)]]
+
 
 #Main layout
 mainlayout =  [[sg.Column(layout0,key='-col1-',visible=True),sg.Column(layout1,key='-col2-',visible=False),sg.Column(layout2,key='-col3-',visible=False),
                 sg.Column(layout3,key='-col4-',visible=False),sg.Column(layout4,key='-col5-',visible=False),sg.Column(layout5,key='-col6-',visible=False),
-                sg.Column(layout6,key='-col7-',visible=False),sg.Column(layout7,key='-col8-',visible=False)]]
+                sg.Column(layout6,key='-col7-',visible=False),sg.Column(layout7,key='-col8-',visible=False),sg.Column(layout8,key='-col9-',visible=False)]]
 window = sg.Window(title="TOPOLOGIAS", layout=mainlayout,auto_size_buttons=True,auto_size_text=True,resizable=True)
 
 # Create an event loop
@@ -402,23 +447,30 @@ while True:
         window['-col2-'].update(visible=False)
         window['-col4-'].update(visible=True)
 
+    if event == '-Balgorithm-':
+        window['-col2-'].update(visible=False)
+        window['-col9-'].update(visible=True)
+
     if event == '-Btopologies-':
         iset = readinput(values['-Setinput-']) #Original Set
+
         Piset = iset.Powerset() #Power Set
+        if(len(iset.elementsscpy()) > 3):
+            sg.popup("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)",title="Tiempo de Calculo")
         t,nt = topologies_of_Set(iset) #
         ttop = []
         nttop = []
-        print(len(t))
+        #print(len(t))
 
         for i in  t:
-            print(i)
+            #print(i)
             ttop.append([str(i)])
 
         for i in  nt:
-            print(i)
+            #print(i)
             nttop.append([str(i)])
 
-        print(iset)
+        #print(iset)
         window['-powersetTable-'].update(values=Piset)
         window['-topologiesTable-'].update(values=ttop)
         window['-notopologiesTable-'].update(values=nttop)
@@ -454,6 +506,11 @@ while True:
     if event == '-returnL1L3-' and window['-col4-'].visible == True:
         window['-col2-'].update(visible=True)
         window['-col4-'].update(visible=False)
+
+    if event == '-returnL1L8-' and window['-col9-'].visible == True:
+        window['-col2-'].update(visible=True)
+        window['-col9-'].update(visible=False)
+
 
     if event == '-returnL4L5-' and window['-col6-'].visible == True:
         window['-col5-'].update(visible=True)
