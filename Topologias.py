@@ -277,12 +277,13 @@ def topologies_of_Set(S):
             if len(cs) == 1:
                 nt.append(cs)
                 continue
-            if len(cs) != len(P) and is_topologie(cs,S) :
+            if len(cs) == len(P):
                 print(kk,"TOPOLOGY :)",cs)
                 kk += 1
                 t.append(cs)
-            elif len(cs) == len(P):
-                print("v:?")
+                continue
+
+            if len(cs) != len(P) and is_topologie(cs,S) :
                 print(kk,"TOPOLOGY :)",cs)
                 kk += 1
                 t.append(cs)
