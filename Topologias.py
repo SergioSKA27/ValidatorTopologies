@@ -1,5 +1,6 @@
 
 from itertools import combinations, permutations,chain
+from os import system
 import time
 import copy
 import PySimpleGUI as sg
@@ -194,6 +195,7 @@ def is_topologie(T, s):
     :param s: the set of all elements
     :return: A boolean value.
     """
+    whhy = []
     flag1 = 0
     for i in  T:
         if i.is_emptyset():
@@ -209,12 +211,16 @@ def is_topologie(T, s):
     if flag1 < 2 :
         return False
 
+
     pairs = []
+
+    #Combinations of families Union
     flag2 = True
     for i in range(2,len(T)+1):
         cm = combinations(T,i)
         if i == 2:
             pairs = list(cm)
+
         for j in list(cm):
             #print("TS",j)
             FU = FamilySetUnion(j)
@@ -252,13 +258,13 @@ def is_topologie(T, s):
     return True
 
 
-
 def topologies_of_Set(S):
     """
     It takes a set S and returns a list of all the topologies of S
 
     :param S: The set of elements that the topology will be defined on
     """
+    kk = 1
 
     if S.is_emptyset():
         return [(S,S)],[]
@@ -272,14 +278,14 @@ def topologies_of_Set(S):
                 nt.append(cs)
                 continue
             if is_topologie(cs,S):
-                print("TOPOLOGY :)",cs)
+                print(kk,"TOPOLOGY :)",cs)
+                kk += 1
                 t.append(cs)
             else:
                 #print(cs)
                 nt.append(cs)
     return t,nt
-    #print("Tops" ,T)
-    #print("NoTops",NT)
+
 
 
 def readinput(s):
@@ -309,11 +315,93 @@ def readinput(s):
         return cset
 
 
+def whyis_topologie(T, s):
+    """
+    The function checks if the given set of sets is a topology on the given set.
 
-#S1 = Set(2, [1,2])
-#Sp = Set(3, [1,2,3])
-#S2 = Set(4, ["A","B","C","D"])
-#P = []
+    :param T: a list of sets
+    :param s: the set of all elements
+    :return: A boolean value.
+    """
+    whhy = []
+    flag1 = 0
+    for i in  T:
+        if i.is_emptyset():
+            #print("000")
+            flag1 += 1
+            break
+
+    for i in  T:
+        if i == s:
+            flag1 += 1
+            break
+
+    if flag1 < 2 :
+        print("1) ",str(Set(0,[])),",", s,"¬(E) τ.")
+        return False
+
+
+    print("1) ",str(Set(0,[])),",", s,"E τ.")
+    print("---------------------------------------------")
+
+
+
+    #Combinations of families Union
+    print("2) La union de todas la posibles familias de conjuntos de τ")
+    flag2 = True
+    for i in range(2,len(T)+1):
+        cm = combinations(T,i)
+        #print("Colecciones de Tamaño", i)
+        #print(list(cm))
+
+        for j in list(cm):
+            print("U",j)
+            FU = FamilySetUnion(j)
+            blongTt = False
+            for k in  T:
+                if k == FU:
+                    #print(FU,"∈ τ.")
+                    blongTt = True
+            if blongTt == False:
+                #print(FU,"¬(∈) τ.")
+                flag2 = False
+                break
+
+        #print("-------------")
+
+    if(flag2 == False):
+        print("¬(E) τ.")
+        return False
+    else:
+        print("E τ.")
+
+    print("---------------------------------------------")
+    pairs = list(combinations(T,2))
+    print("3) La intersección de todos los posibles pares de elementos de τ")
+    flag3 =  True
+    for i in  range(0,len((pairs))):
+        print(pairs[i][0],"n",pairs[i][1])
+        intr = pairs[i][0].Intersection(pairs[i][1])
+        gg = False
+        for j in T:
+            if j == intr:
+                gg = True
+                break
+        if gg == False:
+            flag3 = False
+            break
+
+    if(flag3 == False):
+        print("¬(E) τ.")
+        return False
+
+    print("E τ.")
+    return True
+
+##S1 = Set(2, [1,2])
+##Sp = Set(3, [1,2,3])
+##S2 = Set(4, ["A","B","C","D"])
+##P = []
 #P2 = []
 #start = time.time()
 #topologies_of_Set(Sp)
@@ -409,13 +497,13 @@ layout5 = [[sg.Button("<-",key='-returnL4L5-')],[sg.Text("Tabla del conjunto Pot
 #Layout 6(Topologies Set Table)
 layout6 = [[sg.Button("<-",key='-returnL4L6-')],[sg.Text("Tabla de Topologías")],
             [sg.Table([[]],key='-topologiesTable-',headings=["Topologías"], hide_vertical_scroll=False, vertical_scroll_only=False,
-            auto_size_columns=False,col_widths=[100,50],justification='left')]]
+            auto_size_columns=False,col_widths=[100,50],justification='left')],[sg.Button("Why?",key='-whyistopology-')]]
 
 #Layout 7(No Topologies Set Table)
 layout7 = [[sg.Button("<-",key='-returnL4L7-')],[sg.Text("Tabla de No Topologías")],
             [sg.Table([[]],key='-notopologiesTable-',headings=["No Topologías"], hide_vertical_scroll=False, vertical_scroll_only=False,
-            auto_size_columns=False,col_widths=[100,50],justification='left')]]
-
+            auto_size_columns=False,col_widths=[100,50],justification='left')],[sg.Button("Why?",key='-whyisnotopology-')]]
+#layout 8 (How the algorithm works)
 layout8 = [[sg.Button("<-",key='-returnL1L8-')],[sg.Text("Funcionamiento del algoritmo")],
             [sg.Multiline(textalgorithm,key='-Funcalgo-',size=(50,8),disabled=True)]]
 
@@ -452,6 +540,7 @@ while True:
         window['-col9-'].update(visible=True)
 
     if event == '-Btopologies-':
+        system("cls")
         iset = readinput(values['-Setinput-']) #Original Set
 
         Piset = iset.Powerset() #Power Set
@@ -460,7 +549,7 @@ while True:
         t,nt = topologies_of_Set(iset) #
         ttop = []
         nttop = []
-        #print(len(t))
+        #print(t[0])
 
         for i in  t:
             #print(i)
@@ -471,6 +560,7 @@ while True:
             nttop.append([str(i)])
 
         #print(iset)
+        #system("cls")
         window['-powersetTable-'].update(values=Piset)
         window['-topologiesTable-'].update(values=ttop)
         window['-notopologiesTable-'].update(values=nttop)
@@ -489,6 +579,18 @@ while True:
     if event == '-BNtopologias-':
         window['-col5-'].update(visible=False)
         window['-col8-'].update(visible=True)
+
+    if event == '-whyistopology-' and len(values['-topologiesTable-']) > 0:
+        #print((values['-topologiesTable-'][0]))
+        system("cls")
+        whyis_topologie(t[values['-topologiesTable-'][0]],iset)
+
+    if event == '-whyisnotopology-' and len(values['-notopologiesTable-']) > 0:
+        #print((values['-notopologiesTable-'][0]))
+        system("cls")
+        whyis_topologie(nt[values['-notopologiesTable-'][0]],iset)
+
+
 
     if event == '-returnL0-':
         window['-col1-'].update(visible=True)
