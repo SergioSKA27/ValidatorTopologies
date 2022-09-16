@@ -1,14 +1,8 @@
 
 from itertools import combinations, permutations,chain
 from os import system
-from pickletools import long1
-from queue import Empty
-import ssl
-import stat
-import time
 import copy
 import PySimpleGUI as sg
-
 import platform
 
 if platform.system() == 'Linux':
@@ -617,8 +611,10 @@ while True:
                 longi = "Are you crazy?(Inf)"
             else:
                 longi = NUMBERTOPOLOGIES[longi]
-            pop = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(longi),title="Tiempo de Calculo")
-        if pop == 'Cancel':
+            clicked = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(longi),title="Tiempo de Calculo")
+        else:
+            clicked = None
+        if clicked == 'Cancel':
             continue
         else:
             Piset = iset.Powerset() #Power Set
