@@ -1,9 +1,22 @@
 
 from itertools import combinations, permutations,chain
 from os import system
+from queue import Empty
+import ssl
+import stat
 import time
 import copy
 import PySimpleGUI as sg
+
+import platform
+
+if platform.system() == 'Linux':
+    CLEARW = 'clear'
+elif platform.system() ==  'Windows':
+    CLEARW = 'cls'
+
+#the number of the position i in the list is equal to the number of topologies in a set of i elements
+NUMBERTOPOLOGIES = [1,1,4,29,355,6942,209527,9535241,642779354,63260289423,8977053873043]
 
 
 #Created by: Lopez Martinez Sergio Demis
@@ -43,7 +56,6 @@ class Set:
             self.elements = None
 
         self.elemtslist = list(self.elements)
-
 
 
     def belong(self,element):
@@ -120,19 +132,32 @@ class Set:
         The function returns a string representation of the set
         :return: The elements of the set.
         """
+        k = 0
         if self.is_emptyset():
             return "∅"
-        return str(self.elements)
+        ss = "{"
+        for i in  self.elemtslist:
+            if k != len(self.elements)-1:
+                ss = ss + str(i) + ','
+            else:
+                ss = ss + str(i)
+            k += 1
+        return ss + '}'
 
     def __str__(self) -> str:
         """
         The function takes a set and returns a string representation of the set
         """
+        k = 0
         if self.is_emptyset():
             return "∅"
         ss = "{"
         for i in  self.elemtslist:
-            ss = ss + str(i) + ','
+            if k != len(self.elements)-1:
+                ss = ss + str(i) + ','
+            else:
+                ss = ss + str(i)
+            k += 1
         return ss + '}'
 
     def __eq__(self, __o: object) -> bool:
@@ -144,6 +169,9 @@ class Set:
         :return: a boolean value.
         """
         flag = True
+        if not isinstance(__o,self.__class__ ):
+            return False
+
         if len(self.elements) != len(__o.elementsscpy()):
             return False
         else:
@@ -164,6 +192,14 @@ class Set:
                         continue
         return flag
 
+    def __hash__(self) -> int:
+        """
+        The hash function is a function that takes in an input of any size, performs an operation on it, and returns a fixed
+        size output
+        :return: The hash of the tuple of the elements.
+        """
+        return hash(tuple(sorted(self.elements.values())))
+
     def Powerset(self):
         """
         It returns the powerset of a set.
@@ -178,14 +214,11 @@ class Set:
                 Ps.append(Set(len(e),e))
         return Ps
 
-
 def FamilySetUnion(F) -> Set:
     U = copy.copy(F[0])
     for i in range(1,len(F)):
         U = U.uNION(F[i])
     return U
-
-
 
 def is_topologie(T, s):
     """
@@ -257,7 +290,6 @@ def is_topologie(T, s):
 
     return True
 
-
 def topologies_of_Set(S):
     """
     It takes a set S and returns a list of all the topologies of S
@@ -293,6 +325,41 @@ def topologies_of_Set(S):
     return t,nt
 
 
+def isvalidinput(S):
+    hset = False
+    for i in  S:
+        if i == '}' or i == '{':
+            hset = True
+        else:
+            continue
+
+    if not hset:
+        return True
+    else:
+        stackk = []
+        for i in S:
+            if i == '{':
+                stackk.append(i)
+            elif i == '}':
+                if stackk[len(stackk)-1] ==  '{':
+                    #print(stackk[len(stackk)-1],"GG")
+                    stackk.pop()
+                else:
+                    break
+            else:
+                continue
+        #print(stackk)
+        return len(stackk) == 0
+
+def makeset(S,k):
+    i = k
+    ss = ""
+    cj = []
+    while(i < len(S)  ):
+        pass
+    return Set(len(cj),cj)
+
+
 
 def readinput(s):
     """
@@ -319,7 +386,6 @@ def readinput(s):
         if len(ss) != 0:
             cset.addelement(ss)
         return cset
-
 
 def whyis_topologie(T, s):
     """
@@ -404,20 +470,14 @@ def whyis_topologie(T, s):
     print("E τ.")
     return True
 
-##S1 = Set(2, [1,2])
-##Sp = Set(3, [1,2,3])
-##S2 = Set(4, ["A","B","C","D"])
-##P = []
-#P2 = []
-#start = time.time()
-#topologies_of_Set(Sp)
-#end = time.time()
-#
-#print(end-start)
-#
-#
-#print(S1 == Sp)
+#S1 = Set(2, [Set(2,[1,2]),Set(1,[Set(1,[666])]),Set(0,[]),Set(0,[])])
+#print(S1)
+#print(isvalidinput("{{{{}}}"))
+#st = "{1,2,3},{},{2,666},5"
 
+#stt = makeset(st,False,0)
+
+#print(stt)
 """
     Los pasos que seguimos para obtener las topologías de un conjunto finito de elementos son los siguientes :
 
@@ -546,7 +606,7 @@ while True:
         window['-col9-'].update(visible=True)
 
     if event == '-Btopologies-':
-        system("cls")
+        system(CLEARW)
         iset = readinput(values['-Setinput-']) #Original Set
 
         Piset = iset.Powerset() #Power Set
@@ -588,12 +648,12 @@ while True:
 
     if event == '-whyistopology-' and len(values['-topologiesTable-']) > 0:
         #print((values['-topologiesTable-'][0]))
-        system("cls")
+        system(CLEARW)
         whyis_topologie(t[values['-topologiesTable-'][0]],iset)
 
     if event == '-whyisnotopology-' and len(values['-notopologiesTable-']) > 0:
         #print((values['-notopologiesTable-'][0]))
-        system("cls")
+        system(CLEARW)
         whyis_topologie(nt[values['-notopologiesTable-'][0]],iset)
 
 
