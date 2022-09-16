@@ -346,13 +346,40 @@ def isvalidinput(S):
         #print(stackk)
         return len(stackk) == 0
 
-def makeset(S,k):
-    i = k
+def makeset(S):
     ss = ""
     cj = []
-    while(i < len(S)  ):
-        pass
+    stackk = []
+
+    for i in  S:
+        print("ss",ss)
+        if i == '{' and i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '}':
+            stackk.append(i)
+        elif  i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '{' and i != '}':
+            ss = ss + i
+        elif  i == ',' or i == '|' or i == ';' or i ==  ' ' and i != '{' and i != '}' :
+            stackk.append(ss)
+            ss = ""
+        elif i == '}' and i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '{':
+            ins = []
+            print("SETT",stackk)
+            while(len(stackk) > 0):
+                if stackk[len(stackk)-1] != '{':
+                    ins.append(stackk.pop())
+                else:
+                    break
+            if len(stackk) > 0:
+                stackk.append(Set(len(ins),ins))
+            else:
+                cj.append(Set(len(ins),ins))
+
+    while(len(stackk) > 0):
+        cj.append(stackk.pop())
+    if len(ss) > 0:
+        cj.append(ss)
     return Set(len(cj),cj)
+
+
 
 
 
@@ -470,7 +497,7 @@ def whyis_topologie(T, s):
 #print(isvalidinput("{{{{}}}"))
 #st = "{1,2,3},{},{2,666},5"
 
-#stt = makeset(st,False,0)
+#stt = makeset(st)
 
 #print(stt)
 """
@@ -608,6 +635,7 @@ while True:
         if(len(iset.elementsscpy()) > 3):
             longi = len(iset.elementsscpy())
             if longi > 18:
+                #Your PC can go fire :V
                 longi = "Are you crazy?(Inf)"
             else:
                 longi = NUMBERTOPOLOGIES[longi]
