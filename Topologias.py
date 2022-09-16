@@ -581,6 +581,7 @@ mainlayout =  [[sg.Column(layout0,key='-col1-',visible=True),sg.Column(layout1,k
                 sg.Column(layout6,key='-col7-',visible=False),sg.Column(layout7,key='-col8-',visible=False),sg.Column(layout8,key='-col9-',visible=False)]]
 window = sg.Window(title="TOPOLOGIAS", layout=mainlayout,auto_size_buttons=True,auto_size_text=True,resizable=True)
 
+sg.popup("Le recomendamos dar un viztazo al apartado de ayuda ubicado en la parte superior de la pantalla, antes de comenzar a usar la aplicación")
 # Create an event loop
 while True:
     event, values = window.read()#Captura los eventos y los valores de los elementos
