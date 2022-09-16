@@ -611,28 +611,31 @@ while True:
 
         Piset = iset.Powerset() #Power Set
         if(len(iset.elementsscpy()) > 3):
-            sg.popup("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)",title="Tiempo de Calculo")
-        t,nt = topologies_of_Set(iset) #
-        ttop = []
-        nttop = []
-        #print(t[0])
+            pop = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(NUMBERTOPOLOGIES[len(iset.elementsscpy())]),title="Tiempo de Calculo")
+        if pop == 'Cancel':
+            continue
+        else:
+            t,nt = topologies_of_Set(iset) #
+            ttop = []
+            nttop = []
+            #print(t[0])
 
-        for i in  t:
-            #print(i)
-            ttop.append([str(i)])
+            for i in  t:
+                #print(i)
+                ttop.append([str(i)])
 
-        for i in  nt:
-            #print(i)
-            nttop.append([str(i)])
+            for i in  nt:
+                #print(i)
+                nttop.append([str(i)])
 
-        #print(iset)
-        #system("cls")
-        window['-powersetTable-'].update(values=Piset)
-        window['-topologiesTable-'].update(values=ttop)
-        window['-notopologiesTable-'].update(values=nttop)
-        window['-Setstr-'].update(value=iset)
-        window['-col1-'].update(visible=False)
-        window['-col5-'].update(visible=True)
+            #print(iset)
+            #system("cls")
+            window['-powersetTable-'].update(values=Piset)
+            window['-topologiesTable-'].update(values=ttop)
+            window['-notopologiesTable-'].update(values=nttop)
+            window['-Setstr-'].update(value=iset)
+            window['-col1-'].update(visible=False)
+            window['-col5-'].update(visible=True)
 
     if event == '-Bpowerset-':
         window['-col5-'].update(visible=False)
