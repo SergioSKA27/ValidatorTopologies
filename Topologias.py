@@ -1,6 +1,7 @@
 
 from itertools import combinations, permutations,chain
 from os import system
+from pickletools import long1
 from queue import Empty
 import ssl
 import stat
@@ -16,7 +17,7 @@ elif platform.system() ==  'Windows':
     CLEARW = 'cls'
 
 #the number of the position i in the list is equal to the number of topologies in a set of i elements
-NUMBERTOPOLOGIES = [1,1,4,29,355,6942,209527,9535241,642779354,63260289423,8977053873043]
+NUMBERTOPOLOGIES = [1,1,4,29,355,6942,209527,9535241,642779354,63260289423,8977053873043,1816846038736192, 519355571065774021, 207881393656668953041, 115617051977054267807460, 88736269118586244492485121, 93411113411710039565210494095, 134137950093337880672321868725846,]
 
 
 #Created by: Lopez Martinez Sergio Demis
@@ -609,12 +610,17 @@ while True:
         system(CLEARW)
         iset = readinput(values['-Setinput-']) #Original Set
 
-        Piset = iset.Powerset() #Power Set
         if(len(iset.elementsscpy()) > 3):
-            pop = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(NUMBERTOPOLOGIES[len(iset.elementsscpy())]),title="Tiempo de Calculo")
+            longi = len(iset.elementsscpy())
+            if longi > 18:
+                longi = "Are you crazy?(Inf)"
+            else:
+                longi = NUMBERTOPOLOGIES[longi]
+            pop = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(longi),title="Tiempo de Calculo")
         if pop == 'Cancel':
             continue
         else:
+            Piset = iset.Powerset() #Power Set
             t,nt = topologies_of_Set(iset) #
             ttop = []
             nttop = []
