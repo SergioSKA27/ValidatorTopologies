@@ -319,8 +319,14 @@ def topologies_of_Set(S):
                 nt.append(cs)
     return t,nt
 
-
 def isvalidinput(S):
+    """
+    If the string contains no curly braces, it's valid. Otherwise, it's valid if the string is empty after removing all
+    matching pairs of curly braces
+
+    :param S: a string of characters
+    :return: a boolean value.
+    """
     hset = False
     for i in  S:
         if i == '}' or i == '{':
@@ -347,6 +353,12 @@ def isvalidinput(S):
         return len(stackk) == 0
 
 def makeset(S):
+    """
+    It takes a string of the form {a,b,c} and returns a set object with the elements a,b,c
+
+    :param S: The string that contains the set
+    :return: A set of sets.
+    """
     ss = ""
     cj = []
     stackk = []
@@ -392,9 +404,6 @@ def makeset(S):
         cj.append(separator)
     return Set(len(cj),cj)
 
-
-
-
 def readinput(s):
     """
     It takes a string and returns a set
@@ -423,12 +432,13 @@ def readinput(s):
 
 def whyis_topologie(T, s):
     """
-    The function checks if the given set of sets is a topology on the given set.
+    It checks if a family of sets is a topology
 
     :param T: a list of sets
-    :param s: the set of all elements
-    :return: A boolean value.
+    :param s: the set of all sets
+    :return: a boolean value.
     """
+
     whhy = []
     flag1 = 0
     for i in  T:
@@ -685,7 +695,6 @@ while True:
                 window['-col5-'].update(visible=True)
         else:
             sg.popup("Entrada No valida :(")
-
 
     if event == '-Bpowerset-':
         window['-col5-'].update(visible=False)
