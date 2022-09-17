@@ -350,35 +350,47 @@ def makeset(S):
     ss = ""
     cj = []
     stackk = []
-
-    for i in  S:
-        print("ss",ss)
-        if i == '{' and i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '}':
-            stackk.append(i)
-        elif  i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '{' and i != '}':
-            ss = ss + i
-        elif  i == ',' or i == '|' or i == ';' or i ==  ' ' and i != '{' and i != '}' :
-            stackk.append(ss)
-            ss = ""
-        elif i == '}' and i != ',' and i != '|' and i != ';' and i !=  ' ' and i != '{':
-            ins = []
-            print("SETT",stackk)
-            while(len(stackk) > 0):
-                if stackk[len(stackk)-1] != '{':
-                    ins.append(stackk.pop())
-                else:
-                    break
-            if len(stackk) > 0:
-                stackk.append(Set(len(ins),ins))
+    for i in S:
+        if i != '}':
+            if i == '{':
+                stackk.append(i)
             else:
-                cj.append(Set(len(ins),ins))
-
-    while(len(stackk) > 0):
-        cj.append(stackk.pop())
-    if len(ss) > 0:
-        cj.append(ss)
+                ss += i
+        else:
+            #print("ss",ss)
+            ins = []
+            separator = ""
+            for j in ss:
+                if j != ',' and j != '|' and j != ';' and j !=  ' ' :
+                    separator += j
+                else:
+                    if len(separator) > 0:
+                        ins.append(separator)
+                        separator = ""
+                    else:
+                        continue
+            if  len(separator ):
+                ins.append(separator)
+            ss = ""
+            #print(ins)
+            stackk.pop()
+            cj.append(Set(len(ins),ins))
+    if len(ss):
+        lst = ""
+        separator = ""
+        for j in ss:
+            if j != ',' and j != '|' and j != ';' and j !=  ' ' :
+                separator += j
+            else:
+                if len(separator):
+                    cj.append(separator)
+                    separator = ""
+                else:
+                    continue
+        if len(separator):
+            cj.append(separator)
+        cj.append(separator)
     return Set(len(cj),cj)
-
 
 
 
@@ -496,6 +508,7 @@ def whyis_topologie(T, s):
 #print(S1)
 #print(isvalidinput("{{{{}}}"))
 #st = "{1,2,3},{},{2,666},5"
+#st = "{1,3},{},{1,2,3}"
 
 #stt = makeset(st)
 
@@ -531,7 +544,9 @@ TextFuncApp1 = "El funcionamiento de la aplicación en bastante sencillo , en el
 TextFuncApp2 = "Simbolos Separadores : coma, ;, |, espacio.\n No existe ninguna restricción para definir los miembros del conjunto por tanto cualquier elemento que pueda ser representado por medio de caracteres ASSCI es valido.\n A continuacion Algunos ejemplos de conjutos:  \n"
 TextFuncApp3 = "El conjunto {A,B,C} deberia de ingresarse como A,B,C o A;B;C o A B C o A|B|C.\n El conjunto {1,2,3} debería de ingresarse como 1,2,3 o 1;2;3 o 1 2 3 o 1|2|3.\n"
 TextFuncApp4 = "Finalmente debería presionar el boton de calcular topolpogías, el cual lo dirigira a la seccion donde podra consular aquellas que si lo son y aquellas que no lo son.\n En caso de necesitar ayuda simpre podra presionar el boton ayuda ubicado en la pantalla inicial, y consultar cualquiera de los apartados de dicha sección."
-TextFuncApp = TextFuncApp0 + TextFuncApp1 + TextFuncApp2 +TextFuncApp3 +TextFuncApp4
+TextFuncApp5 = "\n Ademas podemos introducir conjuntos de elementos,de forma que el conjunto sea un conjunto de conjuntos, esto es: "
+TextFuncApp6 = "\n Conjuntos cuyos elementos sean conjuntos, ejemplo: el conjunto {{1,2,3},{}} deberia introducirse de la siguiente forma: {1,2,3},{} . la expresion {} representa ∅. \n NOTA IMPORTANTE: NO MEZCLE CONJUNTOS CON CONJUNTOS COMO ELEMENTOS CON ELEMENTOS SIMPLES ES DECIR LAS EXPRESIONES DEL TIPO {{1,2},5} NO SE GARANTIZA QUE SE INTERPRETEN DEL MODO QUE QUIERE :).DE IGUAL FORMA NO SE PERMITEN CONJUNTOS ANIDADOS DEL TIPO {1,{1,{2,3}}}."
+TextFuncApp = TextFuncApp0 + TextFuncApp1 + TextFuncApp2 +TextFuncApp3 +TextFuncApp4+TextFuncApp5+TextFuncApp6
 textytopology0 = "La Topología es una generalización de algunas de las propiedades de intervalo abierto en la recta real, propiedades independientes de otras presentes en R como la suma, el orden o la distancia.\n"
 textytopology1 = "Definición\n Una topología sobre un conjunto X, es una familia τ ⊂ P(X), verificando \n(i) ∅, X ∈ τ ,\n(ii) si A, B ∈ τ , entonces A ∩ B ∈ τ ,\niii) si { A_i } , i∈I ⊂ τ , entonces ∪ A_i ∈ τ.\nLos elementos de τ se llaman abiertos y el par (X, τ ) se llama espacio topológico."
 textytopology2 ="\nEjemplos\n Se introducen algunos ejemplos fundamentales en topología \n1) sobre X, τind = {∅, X} es la topología indiscreta;\n2) sobre X, τdis = P(X) es la topología discreta;"
@@ -630,43 +645,47 @@ while True:
 
     if event == '-Btopologies-':
         system(CLEARW)
-        iset = readinput(values['-Setinput-']) #Original Set
+        if isvalidinput(values['-Setinput-']):
+            iset = makeset(values['-Setinput-']) #Original Set
 
-        if(len(iset.elementsscpy()) > 3):
-            longi = len(iset.elementsscpy())
-            if longi > 18:
-                #Your PC can go fire :V
-                longi = "Are you crazy?(Inf)"
+            if(len(iset.elementsscpy()) > 3):
+                longi = len(iset.elementsscpy())
+                if longi > 18:
+                    #Your PC can go fire :V
+                    longi = "Are you crazy?(Inf)"
+                else:
+                    longi = NUMBERTOPOLOGIES[longi]
+                clicked = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(longi),title="Tiempo de Calculo")
             else:
-                longi = NUMBERTOPOLOGIES[longi]
-            clicked = sg.PopupOKCancel("El numero de elementos que ingreso es mayor a 3,el calculo tomara un tiempo por favor espere :)","Numero de elementos a calcular: " + str(longi),title="Tiempo de Calculo")
+                clicked = None
+            if clicked == 'Cancel':
+                continue
+            else:
+                Piset = iset.Powerset() #Power Set
+                t,nt = topologies_of_Set(iset) #
+                ttop = []
+                nttop = []
+                #print(t[0])
+
+                for i in  t:
+                    #print(i)
+                    ttop.append([str(i)])
+
+                for i in  nt:
+                    #print(i)
+                    nttop.append([str(i)])
+
+                #print(iset)
+                #system("cls")
+                window['-powersetTable-'].update(values=Piset)
+                window['-topologiesTable-'].update(values=ttop)
+                window['-notopologiesTable-'].update(values=nttop)
+                window['-Setstr-'].update(value=iset)
+                window['-col1-'].update(visible=False)
+                window['-col5-'].update(visible=True)
         else:
-            clicked = None
-        if clicked == 'Cancel':
-            continue
-        else:
-            Piset = iset.Powerset() #Power Set
-            t,nt = topologies_of_Set(iset) #
-            ttop = []
-            nttop = []
-            #print(t[0])
+            sg.popup("Entrada No valida :(")
 
-            for i in  t:
-                #print(i)
-                ttop.append([str(i)])
-
-            for i in  nt:
-                #print(i)
-                nttop.append([str(i)])
-
-            #print(iset)
-            #system("cls")
-            window['-powersetTable-'].update(values=Piset)
-            window['-topologiesTable-'].update(values=ttop)
-            window['-notopologiesTable-'].update(values=nttop)
-            window['-Setstr-'].update(value=iset)
-            window['-col1-'].update(visible=False)
-            window['-col5-'].update(visible=True)
 
     if event == '-Bpowerset-':
         window['-col5-'].update(visible=False)
@@ -712,7 +731,6 @@ while True:
     if event == '-returnL1L8-' and window['-col9-'].visible == True:
         window['-col2-'].update(visible=True)
         window['-col9-'].update(visible=False)
-
 
     if event == '-returnL4L5-' and window['-col6-'].visible == True:
         window['-col5-'].update(visible=True)
